@@ -173,21 +173,22 @@ sub detect_elf_architecture {
     # see https://en.wikipedia.org/wiki/Executable_and_Linkable_Format
 
     my $supported_elf_machine = {
-        0x03 => 'i386',
-        0x3e => 'amd64',
-        0x28 => 'armhf',
-        0xb7 => 'arm64',
-        0xf3 => 'riscv',
+        0x0300 => 'i386',
+        0x3e00 => 'amd64',
+        0x2800 => 'armhf',
+        0xb700 => 'arm64',
+        0xf300 => 'riscv',
+        0x0201 => 'loongarch64',
     };
 
     my $detect_arch = sub {
         open(my $fh, "<", $elf_fn) or die "open '$elf_fn' failed: $!\n";
         binmode($fh);
 
-        my $length = read($fh, my $data, 20) or die "read failed: $!\n";
+        my $length = read($fh, my $data, 21) or die "read failed: $!\n";
 
-        # 4 bytes ELF magic number and 1 byte ELF class, padding, machine
-        my ($magic, $class, undef, $machine) = unpack("A4CA12n", $data);
+        # 4 bytes ELF magic number and 1 byte ELF class, padding, 2 byte machine
+        my ($magic, $class, undef, $machine) = unpack("A4CA13n", $data);
 
         die "'$elf_fn' does not resolve to an ELF!\n"
             if (!defined($class) || !defined($magic) || $magic ne "\177ELF");
