@@ -2797,6 +2797,11 @@ __PACKAGE__->register_method({
                     if !PVE::Storage::storage_can_replicate($storecfg, $storeid, $format);
             }
 
+            PVE::LXC::Config->check_protection(
+                $target_conf,
+                "cannot assign a volume to target CT $target_vmid",
+            );
+
             return ($source_conf, $target_conf, $drive);
         };
 
