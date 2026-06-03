@@ -4,7 +4,7 @@ package PVE::LXC::Tools;
 use strict;
 use warnings;
 
-use POSIX qw(ENOENT S_ISBLK S_ISCHR);
+use POSIX qw(S_ISBLK S_ISCHR);
 
 use PVE::SafeSyslog;
 
@@ -159,9 +159,8 @@ sub get_device_mode_and_rdev($) {
 
     die "Path is not defined\n" if !defined($path);
 
-    my ($mode, $rdev) = (stat($path))[2, 6];
-    die "Device $path does not exist\n" if $! == ENOENT;
-    die "Error accessing device $path\n" if !defined($mode) || !defined($rdev);
+    my ($mode, $rdev) = (stat($path))[2, 6]
+        or die($!{ENOENT} ? "Device $path does not exist\n" : "Error accessing device $path: $!\n");
     die "$path is not a device\n" if !S_ISBLK($mode) && !S_ISCHR($mode);
 
     return ($mode, $rdev);
