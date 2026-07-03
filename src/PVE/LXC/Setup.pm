@@ -11,6 +11,7 @@ use PVE::Tools;
 
 use PVE::LXC::Setup::Alpine;
 use PVE::LXC::Setup::ArchLinux;
+use PVE::LXC::Setup::AOSCOS;
 use PVE::LXC::Setup::CentOS;
 use PVE::LXC::Setup::Debian;
 use PVE::LXC::Setup::Devuan;
@@ -25,6 +26,7 @@ use PVE::LXC::Setup::Unmanaged;
 my $plugins = {
     alpine => 'PVE::LXC::Setup::Alpine',
     archlinux => 'PVE::LXC::Setup::ArchLinux',
+    aoscos => 'PVE::LXC::Setup::AOSCOS',
     centos => 'PVE::LXC::Setup::CentOS',
     debian => 'PVE::LXC::Setup::Debian',
     devuan => 'PVE::LXC::Setup::Devuan',
@@ -44,6 +46,7 @@ my $plugin_alias = {
     'opensuse-slowroll' => 'opensuse',
     'openEuler' => 'openeuler',
     arch => 'archlinux',
+    aosc => 'aoscos',
     sles => 'opensuse',
     rocky => 'centos',
     almalinux => 'centos',

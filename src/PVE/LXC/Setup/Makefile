@@ -3,6 +3,7 @@ SOURCES=\
     Base.pm		\
     Alpine.pm		\
     ArchLinux.pm	\
+    AOSCOS.pm		\
     CentOS.pm		\
     Debian.pm		\
     Devuan.pm		\
