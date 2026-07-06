@@ -33,4 +33,10 @@ sub setup_init {
     $self->setup_systemd_preset();
 }
 
+sub setup_network {
+    my ($self, $conf) = @_;
+
+    $self->setup_network_with_network_scripts($conf);
+}
+
 1;

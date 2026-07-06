@@ -197,7 +197,7 @@ sub setup_network {
         # With CentOS/AlmaLinux/... 10 the support for network scripts got dropped.
         setup_network_with_networkmanager($self, $conf);
     } else {
-        setup_netork_with_network_scripts($self, $conf);
+        setup_network_with_network_scripts($self, $conf);
     }
 }
 
@@ -284,7 +284,7 @@ sub setup_network_with_networkmanager {
     }
 }
 
-sub setup_netork_with_network_scripts {
+sub setup_network_with_network_scripts {
     my ($self, $conf) = @_;
 
     my ($gw, $gw6);
