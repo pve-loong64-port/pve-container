@@ -9,6 +9,7 @@ use Cwd 'abs_path';
 use PVE::RESTEnvironment;
 use PVE::Tools;
 
+use PVE::LXC::Setup::ALT;
 use PVE::LXC::Setup::Alpine;
 use PVE::LXC::Setup::ArchLinux;
 use PVE::LXC::Setup::AOSCOS;
@@ -25,6 +26,7 @@ use PVE::LXC::Setup::Unmanaged;
 
 my $plugins = {
     alpine => 'PVE::LXC::Setup::Alpine',
+    alt => 'PVE::LXC::Setup::ALT',
     archlinux => 'PVE::LXC::Setup::ArchLinux',
     aoscos => 'PVE::LXC::Setup::AOSCOS',
     centos => 'PVE::LXC::Setup::CentOS',
@@ -45,6 +47,7 @@ my $plugin_alias = {
     'opensuse-tumbleweed' => 'opensuse',
     'opensuse-slowroll' => 'opensuse',
     'openEuler' => 'openeuler',
+    altlinux => 'alt',
     arch => 'archlinux',
     aosc => 'aoscos',
     sles => 'opensuse',
@@ -77,6 +80,8 @@ my $autodetect_type = sub {
         return "devuan";
     } elsif (-f "$rootdir/etc/SuSE-brand" || -f "$rootdir/etc/SuSE-release") {
         return "opensuse";
+    } elsif (-f "$rootdir/etc/altlinux-release") {
+        return "alt";
     } elsif (-f "$rootdir/etc/fedora-release") {
         return "fedora";
     } elsif (-f "$rootdir/etc/centos-release" || -f "$rootdir/etc/redhat-release") {
