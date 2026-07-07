@@ -2,6 +2,7 @@ SOURCES=\
     Plugin.pm		\
     Base.pm		\
     Alpine.pm		\
+    ALT.pm		\
     ArchLinux.pm	\
     AOSCOS.pm		\
     CentOS.pm		\
