@@ -390,6 +390,7 @@ sub get_ct_init_path {
         return $self->{plugin}->get_ct_init_path();
     });
 
+    ($init) = $init =~ m|(/.*)| or die "unable to resolve init path - got '$init'\n"; # untaint
     return $init;
 }
 

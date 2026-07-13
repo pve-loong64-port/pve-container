@@ -15,8 +15,9 @@ use File::Basename;
 use POSIX ();
 
 use PVE::INotify;
-use PVE::Tools;
 use PVE::Network;
+use PVE::Seccomp;
+use PVE::Tools;
 
 use PVE::LXC::Setup::Plugin;
 use PVE::LXC::Tools;
@@ -605,26 +606,28 @@ sub clear_machine_id {
 sub get_systemd_version {
     my ($self, $init) = @_;
 
-    my $binary = abs_path($self->{rootdir} . $init);
-    if ($binary =~ /(^\Q$self->{rootdir}\E.*)/) {
-        $binary = $1; # untainted
-    } else {
-        die "Could not construct path to systemd binary: $self->{rootdir}, $init";
-    }
+    my $init_fh = PVE::Tools::open_in_root($self->{rootdir}, $init, O_RDONLY);
+    my $flags = fcntl($init_fh, F_GETFD, 0) // die "failed to get file descriptor flags: $!\n";
+    fcntl($init_fh, F_SETFD, $flags & ~FD_CLOEXEC)
+        // die "failed to remove CLOEXEC flag from fd: $!\n";
 
-    my $version = undef;
-    PVE::Tools::run_command(
-        ['objdump', '-p', $binary],
-        outfunc => sub {
-            my $line = shift;
-            if ($line =~ /libsystemd-shared-(\d+)(?:[-_.][a-zA-Z0-9]+)*\.so:?$/) {
-                $version = $1;
-            }
-        },
-        errmsg => "objdump on $init failed",
-    );
-
-    return $version;
+    return PVE::Tools::run_fork(sub {
+        PVE::Tools::setresuid(65534, 65534, 65534);
+        PVE::Tools::setresgid(65534, 65534, 65534);
+        PVE::Seccomp::set_no_new_privs();
+        my $version;
+        PVE::Cmd::run(
+            ['objdump', '-p', "/proc/self/fd/" . fileno($init_fh)],
+            outfunc => sub {
+                my $line = shift;
+                if ($line =~ /libsystemd-shared-(\d+)(?:[-_.][a-zA-Z0-9]+)*\.so:?$/) {
+                    $version = $1;
+                }
+            },
+            errmsg => "objdump on $init failed",
+        );
+        return $version;
+    });
 }
 
 sub unified_cgroupv2_support {
