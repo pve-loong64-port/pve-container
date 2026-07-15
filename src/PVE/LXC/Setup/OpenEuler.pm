@@ -33,4 +33,12 @@ sub setup_init {
     $self->setup_systemd_preset();
 }
 
+sub setup_network {
+    my ($self, $conf) = @_;
+
+    # LXC upstream uses legacy network scripts on x86_64 and aarch64.
+    # https://github.com/lxc/lxc-ci/blame/7a61e7539f0009ab458661628a34267cbfc288a7/images/openeuler.yaml#L239
+    $self->setup_network_with_network_scripts($conf);
+}
+
 1;
