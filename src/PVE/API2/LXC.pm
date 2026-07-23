@@ -292,6 +292,12 @@ __PACKAGE__->register_method({
         my $pool = extract_param($param, 'pool');
         $rpcenv->check_pool_exist($pool) if defined($pool);
 
+        # vm_start is invoked directly from the create/restore worker, so its
+        # own permissions predicate doesn't fire here - check VM.PowerMgmt up
+        # front whenever the caller asked us to start the CT after creation.
+        $rpcenv->check_vm_perm($authuser, $vmid, $pool, ['VM.PowerMgmt'])
+            if $start_after_create;
+
         if ($rpcenv->check($authuser, "/vms/$vmid", ['VM.Allocate'], 1)) {
             # OK
         } elsif ($pool && $rpcenv->check($authuser, "/pool/$pool", ['VM.Allocate'], 1)) {
