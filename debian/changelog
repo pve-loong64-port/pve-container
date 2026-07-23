@@ -1,3 +1,16 @@
+pve-container (6.1.12) trixie; urgency=medium
+
+  * fix #7380: query systemd version: resolve the container's init binary path
+    while taking the mount namespace into account and open it with
+    RESOLVE_IN_ROOT, fixing container start failing when the init path was
+    wrongly resolved.
+
+  * api: check VM.PowerMgmt up front when starting a container as part of
+    create/restore or snapshot rollback, so a custom role without that
+    privilege cannot power on the container as a side effect.
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 23 Jul 2026 16:19:54 +0200
+
 pve-container (6.1.11) trixie; urgency=medium
 
   * fix #3711: destroy container: warn about storage errors while deleting a
