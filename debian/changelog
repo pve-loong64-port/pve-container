@@ -1,3 +1,25 @@
+pve-container (6.1.13) trixie; urgency=medium
+
+  * fix #7667: device passthrough: only evaluate errno when querying the
+    device actually failed, fixing passthrough being rejected with "Device
+    does not exist" for privileged containers whose OS type ships no matching
+    LXC configuration.
+
+  * setup: fedora: mask the static 'sys-kernel-config.mount' and
+    'sys-kernel-debug.mount' units when preparing a template, as they cannot
+    work inside a container and would otherwise fail on startup, like already
+    done for CentOS templates.
+
+  * setup: openeuler: configure the network through the network scripts that
+    openEuler templates use, instead of failing because the RedHat release
+    file, which openEuler does not ship, could not be read.
+
+  * api: require the 'VM.Config.Disk' privilege and check access to the
+    referenced volume for unused volume entries, treating them like mount
+    points.
+
+ -- Proxmox Support Team <support@proxmox.com>  Tue, 04 Aug 2026 12:20:31 +0200
+
 pve-container (6.1.12) trixie; urgency=medium
 
   * fix #7380: query systemd version: resolve the container's init binary path
