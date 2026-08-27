@@ -1262,15 +1262,15 @@ sub write_pct_config {
                 || $key eq 'env'
                 || $key eq 'lxc';
             my $value = $conf->{$key};
-            die "detected invalid newline inside property '$key'\n"
-                if $value =~ m/\n/;
+            die "detected invalid newline or carriage return inside property '$key'\n"
+                if $value =~ m/[\r\n]/;
             $raw .= "$key: $value\n";
         }
 
         if (my $env = $conf->{env}) {
             for my $variable (split(/\0+/, $env)) {
-                die "detected invalid newline inside property 'env'\n"
-                    if $variable =~ m/\n/;
+                die "detected invalid newline or carriage return inside property 'env'\n"
+                    if $variable =~ m/[\r\n]/;
                 $raw .= "lxc.environment.runtime: $variable\n";
             }
         }
@@ -1279,8 +1279,8 @@ sub write_pct_config {
             foreach my $entry (@$lxcconf) {
                 my ($k, $v) = @$entry;
                 next if $k eq 'lxc.environment.runtime'; # handled above separately
-                die "detected invalid newline inside property '$k'\n"
-                    if $k =~ m/\n/ || $v =~ m/\n/;
+                die "detected invalid newline or carriage return inside property '$k'\n"
+                    if $k =~ m/[\r\n]/ || $v =~ m/[\r\n]/;
                 $raw .= "$k: $v\n";
             }
         }
