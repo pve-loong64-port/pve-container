@@ -1269,6 +1269,8 @@ sub write_pct_config {
 
         if (my $env = $conf->{env}) {
             for my $variable (split(/\0+/, $env)) {
+                die "detected invalid newline inside property 'env'\n"
+                    if $variable =~ m/\n/;
                 $raw .= "lxc.environment.runtime: $variable\n";
             }
         }
@@ -1277,6 +1279,8 @@ sub write_pct_config {
             foreach my $entry (@$lxcconf) {
                 my ($k, $v) = @$entry;
                 next if $k eq 'lxc.environment.runtime'; # handled above separately
+                die "detected invalid newline inside property '$k'\n"
+                    if $k =~ m/\n/ || $v =~ m/\n/;
                 $raw .= "$k: $v\n";
             }
         }
