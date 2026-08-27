@@ -669,7 +669,7 @@ my $confdesc = {
         type => 'string',
         description => "Command to run as init, optionally with arguments;"
             . " may start with an absolute path, relative path, or a binary in \$PATH.",
-        pattern => qr/[^\x00-\x08\x0a-\x1F\x7F]+/, # no control characters besides \t tab.
+        pattern => qr/[^\x00-\x08\x0a-\x1F\x7F]+\z/, # no control characters besides \t tab.
         default => '/sbin/init',
     },
     protection => {
@@ -699,7 +699,8 @@ my $confdesc = {
         description => 'The container runtime environment as NUL-separated list.'
             . ' Replaces any lxc.environment.runtime entries in the config.',
         optional => 1,
-        pattern => qr/(?:\w+=[^\x00-\x08\x0a-\x1F\x7F]*)(?:\0\w+=[^\x00-\x08\x0a-\x1F\x7F]*)*/,
+        pattern =>
+            qr/(?:\w+=[^\x00-\x08\x0a-\x1F\x7F]*)(?:\0\w+=[^\x00-\x08\x0a-\x1F\x7F]*)*\z/,
     },
     hookscript => {
         optional => 1,
