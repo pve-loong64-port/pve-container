@@ -809,7 +809,7 @@ sub resolve_oci_user {
 
         open(my $fh, '<', $file) or return undef;
         while (my $line = <$fh>) {
-            chomp $line;
+            $line =~ s/[\r\n]+\z//; # chomp would only strip the line feed
             my @fields = split(/:/, $line);
             if (defined($fields[$match_index]) && $fields[$match_index] eq $match_val) {
                 return $fields[$ret_index];
@@ -824,7 +824,7 @@ sub resolve_oci_user {
         my @groups;
         open(my $fh, '<', $etc_group) or return undef;
         while (my $line = <$fh>) {
-            chomp $line;
+            $line =~ s/[\r\n]+\z//; # chomp would only strip the line feed
             my (undef, undef, $gid, $user_list) = split(/:/, $line);
             next if !defined($gid) || !defined($user_list);
             my @users = split(/,/, $user_list);
