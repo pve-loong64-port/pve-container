@@ -1,3 +1,24 @@
+pve-container (6.1.14) trixie; urgency=medium
+
+  * fix #7148: reassign volume: check the target container's protection flag
+    before removing the volume from the source config, as the volume would
+    otherwise end up orphaned, present in neither configuration.
+
+  * config: reject line feeds and carriage returns in every rendered config
+    value, including the low-level LXC options and the container runtime
+    environment, which were written out unchecked so far.
+
+  * oci create: harden handling of the image-provided config and user
+    database:
+    - reject all control characters but the tab, a wrong character range let
+      a line feed through that could corrupt the generated container config.
+    - tolerate CRLF line endings in the passwd and group database, which so
+      far broke resolving the supplementary groups for such images.
+    - reject non-numeric user and group IDs, which so far only surfaced as an
+      opaque failure on the first container start.
+
+ -- Proxmox Support Team <support@proxmox.com>  Thu, 27 Aug 2026 21:48:29 +0200
+
 pve-container (6.1.13) trixie; urgency=medium
 
   * fix #7667: device passthrough: only evaluate errno when querying the
