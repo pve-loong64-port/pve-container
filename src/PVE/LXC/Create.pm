@@ -803,6 +803,16 @@ sub resolve_oci_user {
         })
     };
 
+    # the databases live inside the image and are thus fully untrusted
+    my $checked_id = sub {
+        my ($id, $what) = @_;
+
+        die "OCI image contains a non-numeric $what '$id' in its user database\n"
+            if defined($id) && $id !~ /^\d+$/;
+
+        return $id;
+    };
+
     # Scan file, match column $match_index against $match_val, return value at $ret_index
     my $lookup_field = sub {
         my ($file, $match_index, $match_val, $ret_index) = @_;
@@ -828,7 +838,7 @@ sub resolve_oci_user {
             my (undef, undef, $gid, $user_list) = split(/:/, $line);
             next if !defined($gid) || !defined($user_list);
             my @users = split(/,/, $user_list);
-            push @groups, $gid if grep { $_ eq $username } @users;
+            push @groups, $checked_id->($gid, 'group ID') if grep { $_ eq $username } @users;
         }
         return join(',', @groups);
     };
@@ -854,7 +864,7 @@ sub resolve_oci_user {
         $groups = $get_supplementary_groups->($username) if defined($username);
     }
 
-    return ($uid, $gid, $groups);
+    return ($checked_id->($uid, 'user ID'), $checked_id->($gid, 'group ID'), $groups);
 }
 
 1;
